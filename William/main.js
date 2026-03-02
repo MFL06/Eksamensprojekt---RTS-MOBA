@@ -3,7 +3,7 @@ function setup(){
 }
 
 function draw(){
-
+        
 }
 
 class Vek{

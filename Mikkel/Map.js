@@ -21,6 +21,35 @@ function setup() {
   console.log(map); // check the map structure
 }
 
+
+class Vek{
+    constructor(x, y){
+        this.x = x
+        this.y = y
+    }
+}
+
+class Char{
+    constructor(x, y){
+        this.x = x
+        this.y = y
+        this.r = 30
+        this.vek = new Vek(0, 0)
+    }
+
+    move(vek){
+        this.x += vek.x
+        this.y += vek.y
+    }
+
+    show(){
+        fill('red')
+        circle(this.x, this.y, this.r)
+    }
+}
+
+let obj1 = new Char(map[1][1].x, map[1][1].y)
+
 function draw() {
   background(40, 100, 20);
 
@@ -33,4 +62,5 @@ function draw() {
       square(tile.x, tile.y, tileSize);
     }
   }
+  obj1.show()
 }

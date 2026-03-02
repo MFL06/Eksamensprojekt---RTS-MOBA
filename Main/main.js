@@ -25,4 +25,9 @@ class Char{
         this.x += vek.x
         this.y += vek.y
     }
+
+    show(){
+        fill('red')
+        circle(this.x, this.y, this.r)
+    }
 }

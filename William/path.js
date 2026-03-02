@@ -1,29 +1,22 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+// pathfinding.js
 
-const tileSize = 40;
-const rows = 10;
-const cols = 10;
+// Naive pathfinder for now
+function getPath(startTile, endTile, map) {
+    let path = [];
+    let r = startTile.row;
+    let c = startTile.col;
 
-let map = [];
+    while (r !== endTile.row || c !== endTile.col) {
+        if (r < endTile.row) r++;
+        else if (r > endTile.row) r--;
 
-// Create map
-for (let r = 0; r < rows; r++) {
-  map[r] = [];
-  for (let c = 0; c < cols; c++) {
-    map[r][c] = 0;
-  }
-}
+        if (c < endTile.col) c++;
+        else if (c > endTile.col) c--;
 
-// Draw grid
-function drawGrid() {
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      ctx.fillStyle = map[r][c] === 1 ? "green" : "lightgray";
-      ctx.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
-      ctx.strokeRect(c * tileSize, r * tileSize, tileSize, tileSize);
+        path.push(map[r][c]);
     }
-  }
+
+    return path;
 }
 
-drawGrid();
+// Later you can add A* classes or helper functions here

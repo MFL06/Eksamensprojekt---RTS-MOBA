@@ -4,10 +4,8 @@ var rows = 10;
 var cols = 10;
 let map = [];
 
-function setup() {
-  createCanvas(800, 800);
-  rectMode(CENTER); // draw from center instead of top-left
-  // Create 2D map with center coordinates for each square
+// Create 2D map with center coordinates for each square
+function cords(){
   for (let r = 0; r < rows; r++) {
     map[r] = [];
     for (let c = 0; c < cols; c++) {
@@ -18,14 +16,18 @@ function setup() {
       };
     }
   }
+}
+
+function setup() {
+  createCanvas(800, 800);
+  rectMode(CENTER); // draw from center instead of top-left
+  cords()
   console.log(map); // check the map structure
 }
 
-function draw() {
-  background(40, 100, 20);
-
-  // Draw the grid squares
-  for (let r = 0; r < rows; r++) {
+// Draw the grid squares
+function grid(){
+for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       let tile = map[r][c];
       fill("green");
@@ -33,4 +35,9 @@ function draw() {
       square(tile.x, tile.y, tileSize);
     }
   }
+}
+
+function draw() {
+  background(40, 100, 20);
+  grid()  
 }

@@ -20,4 +20,9 @@ class Char{
         this.r = 30
         this.vek = new Vek(0, 0)
     }
+
+    move(vek){
+        this.x += vek.x
+        this.y += vek.y
+    }
 }

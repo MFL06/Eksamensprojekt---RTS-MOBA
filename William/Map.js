@@ -20,6 +20,7 @@ function setup() {
   }
   console.log(map); // check the map structure
 }
+
 function draw() {
   background(40, 100, 20);
 

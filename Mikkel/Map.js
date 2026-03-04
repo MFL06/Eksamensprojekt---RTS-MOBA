@@ -4,13 +4,17 @@ var rows = 10;
 var cols = 10;
 let map = [];
 
+let obj1
+
+
+
 function setup() {
   createCanvas(800, 800);
   rectMode(CENTER); // draw from center instead of top-left
   // Create 2D map with center coordinates for each square
   for (let r = 0; r < rows; r++) {
     map[r] = [];
-    for (let c = 0; c < cols; c++) {
+    for (let c = 0; c < cols; c++) { 
       map[r][c] = {
         x: c * tileSize + tileSize / 2, // center X
         y: r * tileSize + tileSize / 2, // center Y
@@ -19,6 +23,7 @@ function setup() {
     }
   }
   console.log(map); // check the map structure
+  obj1 = new Char(map[1][1].x, map[1][1].y)
 }
 
 
@@ -48,7 +53,7 @@ class Char{
     }
 }
 
-let obj1 = new Char(map[1][1].x, map[1][1].y)
+
 
 function draw() {
   background(40, 100, 20);

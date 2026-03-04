@@ -4,3 +4,8 @@ export function distance(pointA, pointB){
 
     return Math.hypot(distanceX, distanceY);
 }
+
+const NormalX = distanceX 
+const NormalY = distanceY
+
+const Math.hypot(distanceX, distanceY)

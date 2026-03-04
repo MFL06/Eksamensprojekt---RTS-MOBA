@@ -1,7 +1,28 @@
 import { circleoverlap} from "./collisions.js";
 
+let mousePressed = false;
+
 const circleA = {x : 600, y : 500, radius : 100};
 const circleB = {x : 700, y : 500, radius : 150};
+
+document.addEventListener('mousemove',(event) =>{
+    if (!mousePressed) return;
+
+    circleA.x = event.clientX;
+    circleA.y = event.clientY;
+});
+
+document.addEventListener('mousedown',(event) =>{
+    mousePressed = true;
+
+    circleA.x = event.clientX;
+    circleA.y = event.clientY;
+});
+
+document.addEventListener('mouseup',(event) =>{
+    mousePressed = false;
+});
+
 
 function drawCircle(context, circle, color, id){
     const {x, y, radius} = circle;
@@ -14,18 +35,18 @@ function drawCircle(context, circle, color, id){
     context.fill();
 
     context.font = `${radius / 2}px Arial`;
-    context.style = 'white';
+    context.fillstyle = 'white';
     context.textBaseline = 'middle';
     context.fillText(id, x, y);
 }
 
-function drawCollisonmessage(context, hasCollided){
+function drawCollisionmessage(context, hasCollided){
     context.font = `2vw Arial`;
     context.fillStyle = 'white';
     context.textBaseline = 'middle';
     context.fillText(
         `Circles are overlapping: ${hasCollided}`,
-         context.canvas.width / 2, 10,);
+         context.canvas.width / 2, 10);
 }
 
 
@@ -34,8 +55,9 @@ export function tutorial(context) {
 
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     
-    drawCircle(context, circleA, 'rgb(47 66 212)','A')
-    drawCircle(context, circleB, 'rgb(217 84 54)','B')
+    const alpha = hasCollided ? 0.4 : 1;
+    drawCircle(context, circleA, `rgb(47 66 212 / ${alpha})`,'A')
+    drawCircle(context, circleB, `rgb(217 84 54 / ${alpha})`,'B')
 
-    drawCollisonmessage(context, hasCollided);
+    drawCollisionmessage(context, hasCollided);
 }

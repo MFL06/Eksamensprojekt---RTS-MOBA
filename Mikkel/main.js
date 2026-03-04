@@ -11,6 +11,7 @@ class Char{
         this.y = y
         this.r = 30
         this.vek = new Vek(0, 0)
+        this.correction = false
     }
 
     move(vek){

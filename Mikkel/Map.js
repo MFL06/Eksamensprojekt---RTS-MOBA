@@ -26,6 +26,34 @@ function setup() {
   obj1 = new Char(map[1][1].x, map[1][1].y)
 }
 
+function closest(x, y, array){
+  let list = [] 
+  let diffX
+  let diffY
+  let cords
+  for(let r = 0; r != rows; r ++){
+    for(let c = 0; c != cols.length;)
+    diffX = array[r][c].x - x
+    diffY = array[r][c].y - y
+    list.push(Math.hypot(diffX, diffY))
+    if(list[list.length - 1] < 80 && list[list.length - 1] <list[list.length - 2]){
+      cords = {x: array[r][c].x, y: array[r][c].y}
+    }
+  }
+  list.sort()
+  return list[0]
+}
+
+function dragChar(){
+  if(mouseIsPressed){
+
+    obj1.x = mouseX
+    obj1.y = mouseY
+  }
+}
+
+
+
 
 class Vek{
     constructor(x, y){
@@ -68,4 +96,5 @@ function draw() {
     }
   }
   obj1.show()
+  dragChar()
 }

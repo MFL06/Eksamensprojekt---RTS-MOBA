@@ -23,32 +23,30 @@ function setup() {
     }
   }
   console.log(map); // check the map structure
-  obj1 = new Char(map[1][1].x, map[1][1].y)
+  obj1 = new Char(map[4][2].x, map[4][2].y)
 }
 
-function closest(x, y, array){
-  let list = [] 
-  let diffX
-  let diffY
-  let cords
-  for(let r = 0; r != rows; r ++){
-    for(let c = 0; c != cols.length;)
-    diffX = array[r][c].x - x
-    diffY = array[r][c].y - y
-    list.push(Math.hypot(diffX, diffY))
-    if(list[list.length - 1] < 80 && list[list.length - 1] <list[list.length - 2]){
-      cords = {x: array[r][c].x, y: array[r][c].y}
-    }
-  }
-  list.sort()
-  return list[0]
-}
-
-function dragChar(){
+function dragChar(array){
+  const mx = mouseX
+  const my = mouseY
   if(mouseIsPressed){
-
-    obj1.x = mouseX
-    obj1.y = mouseY
+    let list = [] 
+    let diffX
+    let diffY
+    let cords
+    for(let r = 0; r < rows; r ++){
+      for(let c = 0; c < cols; c ++){
+        diffX = array[r][c].x - mx
+        diffY = array[r][c].y - (my-40)
+        list.push(Math.hypot(diffX, diffY))
+        if(list.length > 0 && list[list.length - 1] < 80 && list[list.length - 1] < list[list.length - 2]){
+          cords = {x: array[r][c].x, y: array[r][c].y}
+        }
+      }
+    }
+    print(cords)
+    obj1.x = cords.x
+    obj1.y = cords.y
   }
 }
 
@@ -96,5 +94,5 @@ function draw() {
     }
   }
   obj1.show()
-  dragChar()
+  dragChar(map)
 }

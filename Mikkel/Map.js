@@ -19,17 +19,17 @@ function setup() {
         x: c * tileSize + tileSize / 2, // center X
         y: r * tileSize + tileSize / 2, // center Y
         walkable: true // optional: useful for pathfinding later
-      };
+      }
     }
   }
   console.log(map); // check the map structure
-  obj1 = new Char(map[4][2].x, map[4][2].y)
+  obj1 = new Char(map[2][2].x, map[2][2].y)
 }
 
 function dragChar(array){
   const mx = mouseX
   const my = mouseY
-  if(mouseIsPressed){
+  if(mouseIsPressed && mouseX < width && mouseX > 0 && mouseY < height && mouseY > 0){
     let list = [] 
     let diffX
     let diffY
@@ -37,14 +37,16 @@ function dragChar(array){
     for(let r = 0; r < rows; r ++){
       for(let c = 0; c < cols; c ++){
         diffX = array[r][c].x - mx
-        diffY = array[r][c].y - (my-40)
+        diffY = array[r][c].y - my + 40
         list.push(Math.hypot(diffX, diffY))
-        if(list.length > 0 && list[list.length - 1] < 80 && list[list.length - 1] < list[list.length - 2]){
+        print(list)
+        if(list.length > 1 && list[list.length - 1] < 80 && list[list.length - 1] < list[list.length - 2]){
+          cords = {x: array[r][c].x, y: array[r][c].y}
+        }else if(list.length == 1){
           cords = {x: array[r][c].x, y: array[r][c].y}
         }
       }
     }
-    print(cords)
     obj1.x = cords.x
     obj1.y = cords.y
   }

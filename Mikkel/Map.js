@@ -6,10 +6,11 @@ let map = [];
 
 let obj1
 
+let charList = []
 
 
 function setup() {
-  createCanvas(800, 800);
+  createCanvas(800, 900);
   rectMode(CENTER); // draw from center instead of top-left
   // Create 2D map with center coordinates for each square
   for (let r = 0; r < rows; r++) {
@@ -19,7 +20,7 @@ function setup() {
         map[r][c] = {
         x: c * tileSize + tileSize / 2, // center X
         y: r * tileSize + tileSize / 2, // center Y
-        color: "red",
+        color: "green",
         walkable: true // optional: useful for pathfinding later
         }
       }else{
@@ -34,13 +35,14 @@ function setup() {
     }
   }
   console.log(map); // check the map structure
-  obj1 = new Char(map[2][2].x, map[2][2].y)
+  //obj1 = new Char(map[2][2].x, map[2][2].y)
+  //charList.push(obj1)
 }
 
 function dragChar(array){
   const mx = mouseX
   const my = mouseY
-  if(mouseIsPressed && mouseX < width && mouseX > 0 && mouseY < height && mouseY > 0){
+  if(charList[charList.length - 1].isDragged && mouseIsPressed && mouseX < width && mouseX > 0 && mouseY < 800 && mouseY > 0){
     let list = [] 
     let diffX
     let diffY
@@ -57,8 +59,57 @@ function dragChar(array){
         }
       }
     }
-    obj1.x = cords.x
-    obj1.y = cords.y
+    charList[charList.length - 1].x = cords.x
+    charList[charList.length - 1].y = cords.y
+  }else if(charList[charList.length - 1].isDragged && mouseIsPressed){
+    cords = {x: mx, y: my}
+    charList[charList.length - 1].x = cords.x
+    charList[charList.length - 1].y = cords.y
+  }
+
+}
+/*
+function findSquare(array){
+  const mx = mouseX
+  const my = mouseY
+  if(mx < width && mx > 0 && my < 800 && my > 0){
+    let list = [] 
+    let diffX
+    let diffY
+    let cords
+    for(let r = 0; r < rows; r ++){
+      for(let c = 0; c < cols; c ++){
+        diffX = array[r][c].x - mx
+        diffY = array[r][c].y - my + 40
+        list.push(Math.hypot(diffX, diffY))
+        if(list.length > 1 && list[list.length - 1] < 80 && list[list.length - 1] < list[list.length - 2]){
+          cords = {x: array[r][c].x, y: array[r][c].y}
+        }else if(list.length == 1){
+          cords = {x: array[r][c].x, y: array[r][c].y}
+        }
+      }
+    }
+    return cords
+  }
+  else{
+    cords = {x: mx, y: my}
+    return cords
+  } 
+}
+*/
+function mousePressed(){
+  const mx = mouseX
+  const my = mouseY
+
+  if(Math.hypot(200 - mx, 840 - my) <= 25){
+    charList.push(new Char(mx, my))
+    dragChar(map, charList[charList.length-1])
+  }
+}
+
+function mouseClicked(){
+  if(charList.length > 0){
+    charList[charList.length - 1].isDragged = false
   }
 }
 
@@ -75,7 +126,9 @@ class Char{
         this.x = x
         this.y = y
         this.r = 30
+        this.c = "red"
         this.vek = new Vek(0, 0)
+        this.isDragged = true
     }
 
     move(vek){
@@ -84,11 +137,16 @@ class Char{
     }
 
     show(){
-        fill('red')
+        fill(this.c)
         circle(this.x, this.y, this.r)
     }
 }
 
+function showAll(list){
+  for(let i = 0; i < list.length; i ++){
+    list[i].show()
+  }
+}
 
 
 function draw() {
@@ -103,6 +161,16 @@ function draw() {
       square(tile.x, tile.y, tileSize);
     }
   }
-  obj1.show()
-  dragChar(map)
+
+  circle(200, 840, 50)
+  circle(280, 840, 50)
+  circle(360, 840, 50)
+  if(charList.length > 0){
+    dragChar(map)
+  }
+  
+  showAll(charList)
+  //dragChar(map)
 }
+
+

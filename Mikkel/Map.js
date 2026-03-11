@@ -14,12 +14,23 @@ function setup() {
   // Create 2D map with center coordinates for each square
   for (let r = 0; r < rows; r++) {
     map[r] = [];
-    for (let c = 0; c < cols; c++) { 
-      map[r][c] = {
+    for (let c = 0; c < cols; c++) {
+      if(r == 1 && c == 1) {
+        map[r][c] = {
         x: c * tileSize + tileSize / 2, // center X
         y: r * tileSize + tileSize / 2, // center Y
+        color: "red",
         walkable: true // optional: useful for pathfinding later
+        }
+      }else{
+        map[r][c] = {
+        x: c * tileSize + tileSize / 2, // center X
+        y: r * tileSize + tileSize / 2, // center Y
+        color: "green",
+        walkable: true // optional: useful for pathfinding later
+        }
       }
+      
     }
   }
   console.log(map); // check the map structure
@@ -39,7 +50,6 @@ function dragChar(array){
         diffX = array[r][c].x - mx
         diffY = array[r][c].y - my + 40
         list.push(Math.hypot(diffX, diffY))
-        print(list)
         if(list.length > 1 && list[list.length - 1] < 80 && list[list.length - 1] < list[list.length - 2]){
           cords = {x: array[r][c].x, y: array[r][c].y}
         }else if(list.length == 1){
@@ -51,8 +61,6 @@ function dragChar(array){
     obj1.y = cords.y
   }
 }
-
-
 
 
 class Vek{
@@ -90,7 +98,7 @@ function draw() {
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       let tile = map[r][c];
-      fill("green");
+      fill(map[r][c].color);
       stroke(0); // optional: add grid lines
       square(tile.x, tile.y, tileSize);
     }

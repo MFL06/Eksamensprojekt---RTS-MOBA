@@ -22,6 +22,7 @@ function cardcords(){
       color: "#d2aa77",
       width: cardsizew,
       height: cardsizeh,
+      type: "shit",
     }
   }
 }
@@ -89,6 +90,17 @@ function cords(){
   }
 }
 
+
+function withinCard(x, y){
+  for(let i = 0; i < cardrows; i ++){
+    if(x >= cards[i].x + 70 - cardsizew / 2 && x <= cards[i].x + cards[i].width && y <= 975 + cardsizeh/2 && y >= 975 - cardsizeh / 2){
+      return i
+    }else{
+      continue
+    }
+  }
+}
+
 function setup() {
   createCanvas(800, 1100);
   rectMode(CENTER); // draw from center instead of top-left
@@ -107,18 +119,22 @@ function dragChar(array){
     let cords
     for(let r = 0; r < rows; r ++){
       for(let c = 0; c < cols; c ++){
-        diffX = array[r][c].x - mx
-        diffY = array[r][c].y - my + 40
-        list.push(Math.hypot(diffX, diffY))
-        if(list.length > 1 && list[list.length - 1] < 80 && list[list.length - 1] < list[list.length - 2]){
-          cords = {x: array[r][c].x, y: array[r][c].y}
-        }else if(list.length == 1){
-          cords = {x: array[r][c].x, y: array[r][c].y}
+        if(array[r][c].walkable == true){
+          diffX = array[r][c].x - mx
+          diffY = array[r][c].y - my
+          list.push(Math.hypot(diffX, diffY))
+          if(list.length > 1 && list[list.length - 1] < 140 && list[list.length - 1] < Math.hypot(cords.x - mx, cords.y - my)){
+            cords = {x: array[r][c].x, y: array[r][c].y}
+          }else if(list.length == 1){
+            cords = {x: array[r][c].x, y: array[r][c].y}
+          }
+          charList[charList.length - 1].x = cords.x
+          charList[charList.length - 1].y = cords.y
         }
+        
+        
       }
     }
-    charList[charList.length - 1].x = cords.x
-    charList[charList.length - 1].y = cords.y
   }else if(charList[charList.length - 1].isDragged && mouseIsPressed){
     cords = {x: mx, y: my}
     charList[charList.length - 1].x = cords.x
@@ -133,8 +149,9 @@ function dragChar(array){
 function mousePressed(){
   const mx = mouseX
   const my = mouseY
-
-  if(Math.hypot(200 - mx, 840 - my) <= 25){
+  console.log(typeof withinCard(mx, my))
+  if(typeof withinCard(mx, my) == "number"){
+    cardNum = withinCard(mx, my)
     charList.push(new Char(mx, my))
     dragChar(map, charList[charList.length-1])
   }
@@ -197,9 +214,7 @@ function draw() {
 
   
 
-  circle(200, 840, 50)
-  circle(280, 840, 50)
-  circle(360, 840, 50)
+
   if(charList.length > 0){
     dragChar(map)
   }

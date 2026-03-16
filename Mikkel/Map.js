@@ -8,6 +8,8 @@ var cardsizew = 150
 var cardsizeh = 200
 var cardgap = 20
 let cards = []
+const frames = 24
+
 
 let obj1
 
@@ -103,6 +105,7 @@ function withinCard(x, y){
 
 function setup() {
   createCanvas(800, 1100);
+  frameRate(24)
   rectMode(CENTER); // draw from center instead of top-left
   // Create 2D map with center coordinates for each square
   cords()

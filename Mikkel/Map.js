@@ -90,7 +90,7 @@ function cords(){
   }
 }
 
-
+//Checker om mus kolliderer emd kort
 function withinCard(x, y){
   for(let i = 0; i < cardrows; i ++){
     if(x >= cards[i].x + 70 - cardsizew / 2 && x <= cards[i].x + cards[i].width && y <= 975 + cardsizeh/2 && y >= 975 - cardsizeh / 2){
@@ -109,6 +109,7 @@ function setup() {
   cardcords()
 }
 
+// Gør så man kan flytte karaktererne ud på banen frit
 function dragChar(array){
   const mx = mouseX
   const my = mouseY
@@ -145,7 +146,7 @@ function dragChar(array){
 
 
 
-
+// Tjekker for om musen bliver trykket. Efter bruger den dragChar() for at flytte karaktererne
 function mousePressed(){
   const mx = mouseX
   const my = mouseY
@@ -157,13 +158,14 @@ function mousePressed(){
   }
 }
 
+// Gør så man ikke længere kan flytte karakterer, når de er sat ned
 function mouseClicked(){
   if(charList.length > 0){
     charList[charList.length - 1].isDragged = false
   }
 }
 
-
+// Karakter class og Vektor class
 class Vek{
     constructor(x, y){
         this.x = x
@@ -176,6 +178,7 @@ class Char{
         this.x = x
         this.y = y
         this.r = 30
+        this.mana = 0
         this.c = "red"
         this.vek = new Vek(0, 0)
         this.isDragged = true
@@ -195,6 +198,41 @@ class Char{
 function showAll(list){
   for(let i = 0; i < list.length; i ++){
     list[i].show()
+  }
+}
+
+class Knight extends Char{
+  constructor(x, y){
+    super(x, y)
+    this.mana = 5
+  }
+}
+
+class Frog extends Char{
+  constructor(x, y){
+    super(x, y)
+    this.mana = 2
+  }
+}
+
+class Tortoise extends Char{
+  constructor(x, y){
+    super(x, y)
+    this.mana = 8
+  }
+}
+
+class Archers extends Char{
+  constructor(x, y){
+    super(x, y)
+    this.mana = 4
+  }
+}
+
+class Bunny extends Char{
+  constructor(x, y){
+    super(x, y)
+    this.mana = 3
   }
 }
 

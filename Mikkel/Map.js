@@ -9,11 +9,23 @@ var cardsizeh = 200
 var cardgap = 20
 let cards = []
 const frames = 24
-
+let cardCycle = getCycle()
 
 let obj1
 
 let charList = []
+
+
+function getCycle(){
+  let list = ["Knight","Frog","Archers","Tortoise","Bunny"]
+  for(let i = list.length - 1; i > 0; i --){
+    let j = Math.floor(Math.random() * (i + 1));
+    let temp = list[i];
+    list[i] = list[j];
+    list[j] = temp;
+  }
+  return list
+}
 
 
 function cardcords(){
@@ -110,6 +122,7 @@ function setup() {
   // Create 2D map with center coordinates for each square
   cords()
   cardcords()
+
 }
 
 // Gør så man kan flytte karaktererne ud på banen frit

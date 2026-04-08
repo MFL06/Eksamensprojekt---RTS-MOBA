@@ -11,6 +11,7 @@ let cards = []
 const frames = 24
 let cardCycle = getCycle()
 
+
 let obj1
 
 let charList = []
@@ -41,14 +42,33 @@ function cardcords(){
   }
 }
 
-function drawcards(){
+function drawcards(list){
   for (let crd = 0; crd < cards.length; crd++) {
       let card = cards[crd];
+      if(card.type == "Knight"){
+        card.color = "grey"
+      }else if(card.type == "Tortoise"){
+        card.color = "yellow"
+      }else if(card.type == "Bunny"){
+        card.color = "white"
+      }else if(card.type == "Archers"){
+        card.color = "red"
+      }else{
+        card.color = "brown"
+      }
+      
       fill(card.color);
       stroke(0); // optional: add grid lines
       rect(card.x + 70, card.y, card.width, card.height);
+      fill("black")
+      textAlign(CENTER)
+      textSize(25)
+      card.type = list[crd]
+      text(list[crd], card.x + 70, card.y)
   }
 }
+
+
 
 
 function cords(){
@@ -122,7 +142,6 @@ function setup() {
   // Create 2D map with center coordinates for each square
   cords()
   cardcords()
-
 }
 
 // Gør så man kan flytte karaktererne ud på banen frit
@@ -168,8 +187,21 @@ function mousePressed(){
   const my = mouseY
   console.log(typeof withinCard(mx, my))
   if(typeof withinCard(mx, my) == "number"){
-    cardNum = withinCard(mx, my)
-    charList.push(new Char(mx, my))
+    i = withinCard(mx, my)
+    if(cards[i].type == "Knight"){
+      charList.push(new Knight(mx, my))
+    }else if(cards[i].type == "Tortoise"){
+      charList.push(new Tortoise(mx, my))
+    }else if(cards[i].type == "Bunny"){
+      charList.push(new Bunny(mx, my))
+    }else if(cards[i].type == "Archers"){
+      charList.push(new Archers(mx, my))
+    }else{
+      charList.push(new Frog(mx, my))
+    }
+    console.log(i)
+    console.log(charList)
+    
     dragChar(map, charList[charList.length-1])
   }
 }
@@ -198,6 +230,9 @@ class Char{
         this.c = "red"
         this.vek = new Vek(0, 0)
         this.isDragged = true
+        this.hp = 100
+        this.dmg = 10
+        this.speed = 10
     }
 
     move(vek){
@@ -221,6 +256,9 @@ class Knight extends Char{
   constructor(x, y){
     super(x, y)
     this.mana = 5
+    this.dmg = 15
+    this.hp = 200
+    this.c = "grey"
   }
 }
 
@@ -228,6 +266,7 @@ class Frog extends Char{
   constructor(x, y){
     super(x, y)
     this.mana = 2
+    this.c = "brown"
   }
 }
 
@@ -235,6 +274,10 @@ class Tortoise extends Char{
   constructor(x, y){
     super(x, y)
     this.mana = 8
+    this.dmg = 10
+    this.hp = 400
+    this.speed = 5
+    this.c = "Yellow"
   }
 }
 
@@ -242,6 +285,8 @@ class Archers extends Char{
   constructor(x, y){
     super(x, y)
     this.mana = 4
+    this.hp = 75
+    this.dmg = 20
   }
 }
 
@@ -249,6 +294,10 @@ class Bunny extends Char{
   constructor(x, y){
     super(x, y)
     this.mana = 3
+    this.hp = 50
+    this.dmg = 30
+    this.speed = 150
+    this.c = "white"
   }
 }
 
@@ -273,9 +322,8 @@ function draw() {
     dragChar(map)
   }
 
-  drawcards()
+  drawcards(cardCycle)
   showAll(charList)
-  //dragChar(map)
 }
 
 

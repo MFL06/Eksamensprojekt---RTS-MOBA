@@ -17,6 +17,11 @@ let obj1
 let charList = []
 
 
+function createTowers(){
+  
+}
+
+
 function getCycle(){
   let list = ["Knight","Frog","Archers","Tortoise","Bunny"]
   for(let i = list.length - 1; i > 0; i --){

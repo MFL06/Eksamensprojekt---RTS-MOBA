@@ -11,11 +11,33 @@ function moveTowardsBridge(char) {
         let dx = targetX - char.x
         let dy = targetY - char.y
         let dist = Math.hypot(dx, dy)
-        char.x += (dx / dist) * 2
-        char.y += (dy / dist) * 2
+        let stepX = (dx / dist) * 2
+        let stepY = (dy / dist) * 2
+ 
+        // Prøv fuld bevægelse
+        char.x += stepX
+        char.y += stepY
+ 
+        // Hvis kollision, rul tilbage og prøv kun X eller kun Y
+        if (checkKollision(char)) {
+            char.x -= stepX
+            char.y -= stepY
+ 
+            // Prøv kun X
+            char.x += stepX
+            if (checkKollision(char)) char.x -= stepX
+ 
+            // Prøv kun Y
+            char.y += stepY
+            if (checkKollision(char)) char.y -= stepY
+        }
     } else {
         // Broen nået – gå lige op
         char.x = targetX
         char.y -= 2
+ 
+        if (checkKollision(char)) {
+            char.y += 2
+        }
     }
 }

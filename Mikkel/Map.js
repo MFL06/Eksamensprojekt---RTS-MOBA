@@ -15,6 +15,7 @@ let charList = []
 let enemyCharList = []
 
 
+// Vælger et tilfældigt "walkable" felt på modstanders side
 function spawnEnemy(){
   let list = []
   for(let i = 0; i < 4; i++){
@@ -29,7 +30,7 @@ function spawnEnemy(){
 }
 
 
-
+// Vælger en tilfældig orden af karakterer i en kortcyklus
 function getCycle(){
   let list = ["Knight","Frog","Archers","Tortoise","Bunny"]
   for(let i = list.length - 1; i > 0; i --){
@@ -148,6 +149,9 @@ function withinCard(x, y){
   }
 }
 
+
+
+
 function setup() {
   createCanvas(800, 1100);
   frameRate(24)
@@ -198,7 +202,6 @@ function dragChar(array){
 function mousePressed(){
   const mx = mouseX
   const my = mouseY
-  console.log(typeof withinCard(mx, my))
   if(typeof withinCard(mx, my) == "number"){
     i = withinCard(mx, my)
     if(cards[i].type == "Knight"){
@@ -212,8 +215,6 @@ function mousePressed(){
     }else{
       charList.push(new Frog(mx, my))
     }
-    console.log(i)
-    console.log(charList)
     
     dragChar(map, charList[charList.length-1])
   }
@@ -256,6 +257,15 @@ class Char{
     show(){
         fill(this.c)
         circle(this.x, this.y, this.r)
+    }
+
+
+    shootEnemy(list){
+      dist = []
+      for(let i = 0; i < list.length; i++){
+        dist.push({"dist": Math.hypot((list[i].x - this.x),(list.y - this.y)), "obj": list[i]})
+      }
+      dist.sort()
     }
 }
 

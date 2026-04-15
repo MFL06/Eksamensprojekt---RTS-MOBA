@@ -11,16 +11,7 @@ let cards = []
 const frames = 24
 let cardCycle = getCycle()
 let enemyCardCycle = getCycle()
-
-
-let obj1
-
 let charList = []
-
-
-function createTowers(){
-  
-}
 
 
 function spawnEnemy(){

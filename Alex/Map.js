@@ -7,14 +7,14 @@ var cardrows = 4
 var cardsizew = 150
 var cardsizeh = 200
 var cardgap = 20
-var towerMaxHp = 1000
-var kingTowerHpMax = 2000
 let cards = []
 const frames = 24
 let cardCycle = getCycle()
 
-
 let charList = []
+
+
+let towers = []
 
 function getCycle(){
   let list = ["Knight","Frog","Archers","Tortoise","Bunny"]
@@ -67,71 +67,50 @@ function drawcards(list){
 }
 
 function cords(){
-   for (let r = 0; r < rows; r++) {
+  for (let r = 0; r < rows; r++) {
     map[r] = [];
+
     for (let c = 0; c < cols; c++) {
+
+      let x = c * tileSize + tileSize / 2
+      let y = r * tileSize + tileSize / 2
+
       // Bridge
-      if(r == 5 && c == 1 || r == 4 && c == 1 || r == 4 && c == 8 || r == 5 && c == 8) {
-        map[r][c] = {
-        x: c * tileSize + tileSize / 2,
-        y: r * tileSize + tileSize / 2,
-        color: "grey",
-        walkable: true
-        }
+      if((r == 5 && c == 1) || (r == 4 && c == 1) || (r == 4 && c == 8) || (r == 5 && c == 8)) {
+        map[r][c] = { x, y, color: "grey", walkable: true }
       }
+
       // water
       else if(r == 4 || r == 5){
-         map[r][c] = {
-        x: c * tileSize + tileSize / 2,
-        y: r * tileSize + tileSize / 2,
-        color: "blue",
-        walkable: false
+        map[r][c] = { x, y, color: "blue", walkable: false }
       }
-      
-      /*else if(r == && 1 c == 1|| r == 1 && c == 8){
-        map[r][c] = {
-        x: c * tileSize + tileSize / 2,
-        y: r * tileSize + tileSize / 2,
-        color: "#c0c0c0"
-        tower: true
-        walkable: false
-        hp: towerHpMax
-        maxHp: towerHpMax
-        team: "enemy"
-        }
-      }*/
-      // Towers
-      }else if(r == 8 && c == 1 || r == 8 && c == 8 || r == 1 && c == 1 || r == 1 && c == 8){
-        map[r][c] = {
-        x: c * tileSize + tileSize / 2,
-        y: r * tileSize + tileSize / 2,
-        color: "#c0c0c0",
-        tower: true,
-        walkable: false
+
+      // NORMAL TOWERS
+      else if((r == 8 && c == 1) || (r == 8 && c == 8) || (r == 1 && c == 1) || (r == 1 && c == 8)){
+        map[r][c] = { x, y, color: "#c0c0c0", walkable: false }
+
+        let team = (r > 5) ? "player" : "enemy"
+        towers.push(new Tower(x, y, team))
       }
-      // King tower
-      }else if(r == 9 && c == 4 || r == 9 && c == 5 || r == 0 && c == 4 || r == 0 && c == 5){
-        map[r][c] = {
-        x: c * tileSize + tileSize / 2,
-        y: r * tileSize + tileSize / 2,
-        color: "#EFBF04",
-        ktower: true,
-        walkable: false
+
+      // KING TOWERS
+      else if((r == 9 && c == 4) || (r == 9 && c == 5) || (r == 0 && c == 4) || (r == 0 && c == 5)){
+        map[r][c] = { x, y, color: "#EFBF04", walkable: false }
+
+        let team = (r > 5) ? "player" : "enemy"
+        let kt = new Tower(x, y, team)
+        kt.hp = 1000
+        kt.range = 250
+        towers.push(kt)
       }
-      }
-      else{  
-        // Grass
-        map[r][c] = {
-        x: c * tileSize + tileSize / 2,
-        y: r * tileSize + tileSize / 2,
-        color: "green",
-        walkable: true
-        }
+
+      // grass
+      else{
+        map[r][c] = { x, y, color: "green", walkable: true }
       }
     }
   }
 }
-
 function withinCard(x, y){
   for(let i = 0; i < cardrows; i ++){
     if(x >= cards[i].x + 70 - cardsizew / 2 && x <= cards[i].x + cards[i].width && y <= 975 + cardsizeh/2 && y >= 975 - cardsizeh / 2){
@@ -209,10 +188,60 @@ function mouseClicked(){
 
 
 
+  class Tower {
+  constructor(x, y, team) {
+    this.x = x
+    this.y = y
+    this.team = team
 
+    this.hp = 500
+    this.range = 200
+    this.dmg = 10
 
-   
-    
+    this.cooldown = 0
+    this.maxCooldown = 30
+  }
+
+  attack() {
+    if (this.cooldown > 0) {
+      this.cooldown--
+      return
+    }
+
+    let target = null
+    let shortest = Infinity
+
+    for (let i = 0; i < charList.length; i++) {
+      let char = charList[i]
+
+      if (char.team != this.team) {
+        let d = dist(this.x, this.y, char.x, char.y)
+
+        if (d < this.range && d < shortest) {
+          target = char
+          shortest = d
+        }
+      }
+    }
+
+    if (target) {
+      target.hp -= this.dmg
+      this.cooldown = this.maxCooldown
+
+      stroke(255, 0, 0)
+      line(this.x, this.y, target.x, target.y)
+    }
+  }
+
+  show() {
+    fill(200)
+    square(this.x, this.y, tileSize)
+
+    fill(0)
+    textAlign(CENTER)
+    text(this.hp, this.x, this.y)
+  }
+}
 
 class Vek{
     constructor(x, y){
@@ -233,6 +262,7 @@ class Char{
         this.hp = 100
         this.dmg = 10
         this.speed = 10
+        this.team = "player"
     }
 
     move(vek){
@@ -249,6 +279,14 @@ class Char{
 function showAll(list){
   for(let i = 0; i < list.length; i ++){
     list[i].show()
+  }
+}
+
+function removeDead() {
+  for (let i = charList.length - 1; i >= 0; i--) {
+    if (charList[i].hp <= 0) {
+      charList.splice(i, 1)
+    }
   }
 }
 
@@ -307,26 +345,34 @@ class Bunny extends Char{
 function draw() {
   background(40, 100, 20);
 
+  // draw map
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       let tile = map[r][c];
-      fill(map[r][c].color);
+      fill(tile.color);
       stroke(0);
       square(tile.x, tile.y, tileSize);
     }
   }
 
-  if(charList.length > 0){
+  // towers (NEW system)
+  for (let i = 0; i < towers.length; i++) {
+    towers[i].attack()
+    towers[i].show()
+  }
+
+  // dragging
+  if (charList.length > 0) {
     dragChar(map)
   }
 
-  // Bevæg alle karakterer mod broen
+  // movement
   for (let i = 0; i < charList.length; i++) {
     moveTowardsBridge(charList[i])
   }
 
+  removeDead()
+
   drawcards(cardCycle)
   showAll(charList)
-
-  
 }

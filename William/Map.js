@@ -10,8 +10,35 @@ var cardgap = 20
 let cards = []
 const frames = 24
 let cardCycle = getCycle()
-
+let enemyCardCycle = getCycle()
 let charList = []
+let enemyCharList = []
+let spawnTimer = 0
+let spawnInterval = 24*4.5 
+
+function spawnEnemy(){
+  let list = []
+  for(let c = 0; c < cols; c++){
+    for(let r = 0; r < 4; r++){
+      if(map[r][c].walkable == true){
+        list.push(map[r][c])
+      }
+    }
+  }
+  let tile = list[Math.floor(Math.random() * list.length)]
+  let type = enemyCardCycle[Math.floor(Math.random() * enemyCardCycle.length)]
+
+  let enemy
+  if(type == "Knight")        enemy = new Knight(tile.x, tile.y)
+  else if(type == "Tortoise") enemy = new Tortoise(tile.x, tile.y)
+  else if(type == "Bunny")    enemy = new Bunny(tile.x, tile.y)
+  else if(type == "Archers")  enemy = new Archers(tile.x, tile.y)
+  else                        enemy = new Frog(tile.x, tile.y)
+
+  enemy.isDragged = false
+  enemy.isEnemy = true
+  enemyCharList.push(enemy)
+}
 
 function getCycle(){
   let list = ["Knight","Frog","Archers","Tortoise","Bunny"]
@@ -51,7 +78,6 @@ function drawcards(list){
       }else{
         card.color = "brown"
       }
-      
       fill(card.color);
       stroke(0);
       rect(card.x + 70, card.y, card.width, card.height);
@@ -67,50 +93,17 @@ function cords(){
    for (let r = 0; r < rows; r++) {
     map[r] = [];
     for (let c = 0; c < cols; c++) {
-      // Bridge
       if(r == 5 && c == 1 || r == 4 && c == 1 || r == 4 && c == 8 || r == 5 && c == 8) {
-        map[r][c] = {
-        x: c * tileSize + tileSize / 2,
-        y: r * tileSize + tileSize / 2,
-        color: "grey",
-        walkable: true
-        }
+        map[r][c] = { x: c * tileSize + tileSize / 2, y: r * tileSize + tileSize / 2, color: "grey", walkable: true }
       }
-      // water
       else if(r == 4 || r == 5){
-         map[r][c] = {
-        x: c * tileSize + tileSize / 2,
-        y: r * tileSize + tileSize / 2,
-        color: "blue",
-        walkable: false
-      }
-      // Towers
+        map[r][c] = { x: c * tileSize + tileSize / 2, y: r * tileSize + tileSize / 2, color: "blue", walkable: false }
       }else if(r == 8 && c == 1 || r == 8 && c == 8 || r == 1 && c == 1 || r == 1 && c == 8){
-        map[r][c] = {
-        x: c * tileSize + tileSize / 2,
-        y: r * tileSize + tileSize / 2,
-        color: "#c0c0c0",
-        tower: true,
-        walkable: false
-      }
-      // King tower
+        map[r][c] = { x: c * tileSize + tileSize / 2, y: r * tileSize + tileSize / 2, color: "#c0c0c0", tower: true, walkable: false }
       }else if(r == 9 && c == 4 || r == 9 && c == 5 || r == 0 && c == 4 || r == 0 && c == 5){
-        map[r][c] = {
-        x: c * tileSize + tileSize / 2,
-        y: r * tileSize + tileSize / 2,
-        color: "#EFBF04",
-        ktower: true,
-        walkable: false
-      }
-      }
-      else{  
-        // Grass
-        map[r][c] = {
-        x: c * tileSize + tileSize / 2,
-        y: r * tileSize + tileSize / 2,
-        color: "green",
-        walkable: true
-        }
+        map[r][c] = { x: c * tileSize + tileSize / 2, y: r * tileSize + tileSize / 2, color: "#EFBF04", ktower: true, walkable: false }
+      }else{
+        map[r][c] = { x: c * tileSize + tileSize / 2, y: r * tileSize + tileSize / 2, color: "green", walkable: true }
       }
     }
   }
@@ -210,6 +203,7 @@ class Char{
         this.hp = 100
         this.dmg = 10
         this.speed = 10
+        this.isEnemy = false
     }
 
     move(vek){
@@ -302,6 +296,17 @@ function draw() {
     moveTowardsBridge(charList[i])
   }
 
+  // Spawn og bevæg fjender
+  spawnTimer++
+  if(spawnTimer >= spawnInterval){
+    spawnEnemy()
+    spawnTimer = 0
+  }
+  for (let i = 0; i < enemyCharList.length; i++) {
+    moveEnemyTowardsBridge(enemyCharList[i])
+  }
+
   drawcards(cardCycle)
   showAll(charList)
+  showAll(enemyCharList)
 }

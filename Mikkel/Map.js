@@ -12,6 +12,7 @@ const frames = 24
 let cardCycle = getCycle()
 let enemyCardCycle = getCycle()
 let charList = []
+let enemyCharList = []
 
 
 function spawnEnemy(){

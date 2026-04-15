@@ -10,6 +10,7 @@ var cardgap = 20
 let cards = []
 const frames = 24
 let cardCycle = getCycle()
+let enemyCardCycle = getCycle()
 
 
 let obj1
@@ -20,6 +21,21 @@ let charList = []
 function createTowers(){
   
 }
+
+
+function spawnEnemy(){
+  let list = []
+  for(let i = 0; i < 4; i++){
+    for(let n = 0; n < rows; n++){
+      if(map[i][n].walkable == true){
+        list.push(map[i][n])
+      }
+    }
+  }
+
+  return list[Math.floor(Math.random() * list.length)]
+}
+
 
 
 function getCycle(){

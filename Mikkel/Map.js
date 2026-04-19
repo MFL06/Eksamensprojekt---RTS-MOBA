@@ -13,24 +13,33 @@ let cardCycle = getCycle()
 let enemyCardCycle = getCycle()
 let charList = []
 let enemyCharList = []
+let spawnTimer = 0
+let spawnInterval = 24*4.5 
 
-
-// Vælger et tilfældigt "walkable" felt på modstanders side
 function spawnEnemy(){
   let list = []
-  for(let i = 0; i < 4; i++){
-    for(let n = 0; n < rows; n++){
-      if(map[i][n].walkable == true){
-        list.push(map[i][n])
+  for(let c = 0; c < cols; c++){
+    for(let r = 0; r < 4; r++){
+      if(map[r][c].walkable == true){
+        list.push(map[r][c])
       }
     }
   }
+  let tile = list[Math.floor(Math.random() * list.length)]
+  let type = enemyCardCycle[Math.floor(Math.random() * enemyCardCycle.length)]
 
-  return list[Math.floor(Math.random() * list.length)]
+  let enemy
+  if(type == "Knight")        enemy = new Knight(tile.x, tile.y)
+  else if(type == "Tortoise") enemy = new Tortoise(tile.x, tile.y)
+  else if(type == "Bunny")    enemy = new Bunny(tile.x, tile.y)
+  else if(type == "Archers")  enemy = new Archers(tile.x, tile.y)
+  else                        enemy = new Frog(tile.x, tile.y)
+
+  enemy.isDragged = false
+  enemy.isEnemy = true
+  enemyCharList.push(enemy)
 }
 
-
-// Vælger en tilfældig orden af karakterer i en kortcyklus
 function getCycle(){
   let list = ["Knight","Frog","Archers","Tortoise","Bunny"]
   for(let i = list.length - 1; i > 0; i --){
@@ -42,12 +51,11 @@ function getCycle(){
   return list
 }
 
-
 function cardcords(){
   for (let crd = 0; crd < cardrows; crd++){
     cards[crd]={
-      x: crd * (cardsizew + cardgap) + cardsizew / 2, // center X - spread horizontally with gap
-      y: 975, // fixed Y position at bottom
+      x: crd * (cardsizew + cardgap) + cardsizew / 2,
+      y: 975,
       color: "#d2aa77",
       width: cardsizew,
       height: cardsizeh,
@@ -70,9 +78,8 @@ function drawcards(list){
       }else{
         card.color = "brown"
       }
-      
       fill(card.color);
-      stroke(0); // optional: add grid lines
+      stroke(0);
       rect(card.x + 70, card.y, card.width, card.height);
       fill("black")
       textAlign(CENTER)
@@ -82,63 +89,26 @@ function drawcards(list){
   }
 }
 
-
-
-
 function cords(){
    for (let r = 0; r < rows; r++) {
     map[r] = [];
     for (let c = 0; c < cols; c++) {
-      // Bridge
       if(r == 5 && c == 1 || r == 4 && c == 1 || r == 4 && c == 8 || r == 5 && c == 8) {
-        map[r][c] = {
-        x: c * tileSize + tileSize / 2, // center X
-        y: r * tileSize + tileSize / 2, // center Y
-        color: "grey",
-        walkable: true // optional: useful for pathfinding later
-        }
+        map[r][c] = { x: c * tileSize + tileSize / 2, y: r * tileSize + tileSize / 2, color: "grey", walkable: true }
       }
-      // water
       else if(r == 4 || r == 5){
-         map[r][c] = {
-        x: c * tileSize + tileSize / 2, // center X
-        y: r * tileSize + tileSize / 2, // center Y
-        color: "blue",
-        walkable: false // optional: useful for pathfinding later
-      }
-      // Towers
+        map[r][c] = { x: c * tileSize + tileSize / 2, y: r * tileSize + tileSize / 2, color: "blue", walkable: false }
       }else if(r == 8 && c == 1 || r == 8 && c == 8 || r == 1 && c == 1 || r == 1 && c == 8){
-        map[r][c] = {
-        x: c * tileSize + tileSize / 2, // center X
-        y: r * tileSize + tileSize / 2, // center Y
-        color: "#c0c0c0",
-        tower: true,
-        walkable: false // optional: useful for pathfinding later
-      }
-      // King tower
+        map[r][c] = { x: c * tileSize + tileSize / 2, y: r * tileSize + tileSize / 2, color: "#c0c0c0", tower: true, walkable: false }
       }else if(r == 9 && c == 4 || r == 9 && c == 5 || r == 0 && c == 4 || r == 0 && c == 5){
-        map[r][c] = {
-        x: c * tileSize + tileSize / 2, // center X
-        y: r * tileSize + tileSize / 2, // center Y
-        color: "#EFBF04",
-        ktower: true,
-        walkable: false // optional: useful for pathfinding later
-      }
-      }
-      else{  
-        // Grass
-        map[r][c] = {
-        x: c * tileSize + tileSize / 2, // center X
-        y: r * tileSize + tileSize / 2, // center Y
-        color: "green",
-        walkable: true // optional: useful for pathfinding later
-        }
+        map[r][c] = { x: c * tileSize + tileSize / 2, y: r * tileSize + tileSize / 2, color: "#EFBF04", ktower: true, walkable: false }
+      }else{
+        map[r][c] = { x: c * tileSize + tileSize / 2, y: r * tileSize + tileSize / 2, color: "green", walkable: true }
       }
     }
   }
 }
 
-//Checker om mus kolliderer emd kort
 function withinCard(x, y){
   for(let i = 0; i < cardrows; i ++){
     if(x >= cards[i].x + 70 - cardsizew / 2 && x <= cards[i].x + cards[i].width && y <= 975 + cardsizeh/2 && y >= 975 - cardsizeh / 2){
@@ -149,19 +119,14 @@ function withinCard(x, y){
   }
 }
 
-
-
-
 function setup() {
   createCanvas(800, 1100);
   frameRate(24)
-  rectMode(CENTER); // draw from center instead of top-left
-  // Create 2D map with center coordinates for each square
+  rectMode(CENTER);
   cords()
   cardcords()
 }
 
-// Gør så man kan flytte karaktererne ud på banen frit
 function dragChar(array){
   const mx = mouseX
   const my = mouseY
@@ -184,8 +149,6 @@ function dragChar(array){
           charList[charList.length - 1].x = cords.x
           charList[charList.length - 1].y = cords.y
         }
-        
-        
       }
     }
   }else if(charList[charList.length - 1].isDragged && mouseIsPressed){
@@ -193,12 +156,8 @@ function dragChar(array){
     charList[charList.length - 1].x = cords.x
     charList[charList.length - 1].y = cords.y
   }
-
 }
 
-
-
-// Tjekker for om musen bliver trykket. Efter bruger den dragChar() for at flytte karaktererne
 function mousePressed(){
   const mx = mouseX
   const my = mouseY
@@ -215,19 +174,16 @@ function mousePressed(){
     }else{
       charList.push(new Frog(mx, my))
     }
-    
     dragChar(map, charList[charList.length-1])
   }
 }
 
-// Gør så man ikke længere kan flytte karakterer, når de er sat ned
 function mouseClicked(){
   if(charList.length > 0){
     charList[charList.length - 1].isDragged = false
   }
 }
 
-// Karakter class og Vektor class
 class Vek{
     constructor(x, y){
         this.x = x
@@ -247,6 +203,7 @@ class Char{
         this.hp = 100
         this.dmg = 10
         this.speed = 10
+        this.isEnemy = false
     }
 
     move(vek){
@@ -257,15 +214,6 @@ class Char{
     show(){
         fill(this.c)
         circle(this.x, this.y, this.r)
-    }
-
-
-    shootEnemy(list){
-      dist = []
-      for(let i = 0; i < list.length; i++){
-        dist.push({"dist": Math.hypot((list[i].x - this.x),(list.y - this.y)), "obj": list[i]})
-      }
-      dist.sort()
     }
 }
 
@@ -282,14 +230,16 @@ class Knight extends Char{
     this.dmg = 15
     this.hp = 200
     this.c = "grey"
+    this.speed = 2
   }
 }
 
 class Frog extends Char{
   constructor(x, y){
     super(x, y)
-    this.mana = 2
+    this.mana = 3
     this.c = "brown"
+    this.speed = 2
   }
 }
 
@@ -299,7 +249,7 @@ class Tortoise extends Char{
     this.mana = 8
     this.dmg = 10
     this.hp = 400
-    this.speed = 5
+    this.speed = 1
     this.c = "Yellow"
   }
 }
@@ -310,6 +260,7 @@ class Archers extends Char{
     this.mana = 4
     this.hp = 75
     this.dmg = 20
+    this.speed = 1.5
   }
 }
 
@@ -319,34 +270,43 @@ class Bunny extends Char{
     this.mana = 3
     this.hp = 50
     this.dmg = 30
-    this.speed = 150
+    this.speed = 3.5
     this.c = "white"
   }
 }
 
-
 function draw() {
   background(40, 100, 20);
 
-  // Draw the grid squares
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       let tile = map[r][c];
       fill(map[r][c].color);
-      stroke(0); // optional: add grid lines
+      stroke(0);
       square(tile.x, tile.y, tileSize);
     }
   }
-
-  
-
 
   if(charList.length > 0){
     dragChar(map)
   }
 
+  // Bevæg alle karakterer mod broen
+  for (let i = 0; i < charList.length; i++) {
+    moveTowardsBridge(charList[i])
+  }
+
+  // Spawn og bevæg fjender
+  spawnTimer++
+  if(spawnTimer >= spawnInterval){
+    spawnEnemy()
+    spawnTimer = 0
+  }
+  for (let i = 0; i < enemyCharList.length; i++) {
+    moveEnemyTowardsBridge(enemyCharList[i])
+  }
+
   drawcards(cardCycle)
   showAll(charList)
+  showAll(enemyCharList)
 }
-
-
